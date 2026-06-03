@@ -13,7 +13,10 @@
 #include "nodes/UsdMeshInstanceNode3D.h"
 #include "nodes/UsdMultiMeshInstanceNode3D.h"
 #include "nodes/UsdXFormNode3D.h"
+#include "nodes/IDTXFlowChunker.h"
 #include "utils/IDTXFlowGodotLogger.h"
+
+#include "exporter/IDTXFlowExporter.h"
 
 using namespace godot;
 
@@ -64,6 +67,8 @@ void initialize_idtxflow_module(ModuleInitializationLevel p_level) {
     GDREGISTER_CLASS(UsdMultiMeshInstanceNode3D)
     GDREGISTER_CLASS(UsdSkeletonNode3D)
     GDREGISTER_CLASS(UsdStaticBodyNode3D)
+    GDREGISTER_CLASS(IDTXFlowExporter)
+    GDREGISTER_CLASS(IDTXFlowChunker)
     
 #ifdef IDTXFLOW_MDL_ENABLED
     // activate the mdl material conversion
