@@ -83,3 +83,32 @@ screenshot, and **editor-console capture** (`read_log` reads the Output dock's
 `EditorLog` RichTextLabel directly — prints/warnings/errors — falling back to
 the log file). Not yet: the Profiling/Diagnostics category and asset-pipeline
 operations beyond scenes. Tracked in Linear CHI-313.
+
+## Runtime bridge (drive a deployed game, e.g. a Quest 3)
+
+`mcp_bridge.gd` is the editor plugin. `mcp_runtime.gd` is the same MCP server as
+an **autoload**, so it runs inside an exported/running game over the live
+`SceneTree` instead of the editor — letting an MCP client inspect and poke a
+deployed build (a headless server, a mobile app, an Android XR headset).
+
+Enable it as an autoload in the consuming project:
+
+```ini
+[autoload]
+McpRuntime="*res://addons/vsekai_godot_mcp/mcp_runtime.gd"
+```
+
+It binds `127.0.0.1:8788`. On Android, the export needs the `INTERNET`
+permission (`permissions/internet=true`) for the listen socket, and reach it
+from a host over adb:
+
+```sh
+adb forward tcp:8790 tcp:8788          # host:8790 -> device:8788
+# then point the MCP client at http://127.0.0.1:8790/mcp
+```
+
+Editor-only commands (`open_scene`, `play_scene`, …) return an error at runtime;
+scene/node/property/`call_method`/`run_script`/`get_render_info`/`screenshot`
+operate on the running game. Note: under XR, `screenshot` reads the flat Window
+viewport (the XR compositor's per-eye swapchain is not host-readable), so it is
+black for XR apps; use `get_render_info` / `run_script` for XR diagnostics.
